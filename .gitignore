@@ -1,0 +1,9 @@
+## Vscode
+.vscode
+
+## Server
+node_modules
+package-lock.json
+
+## Config
+dev.js
