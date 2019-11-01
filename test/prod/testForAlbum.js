@@ -40,7 +40,7 @@ describe('Album Router', () => {
       .send({
         title: key.albumTitle,
         performer: key.albumPerformer,
-        cost: key.albumCost
+        cost: parseInt(key.albumCost)
       })
       .end((_err, res) => {
         res.should.have.status(200)
@@ -52,7 +52,7 @@ describe('Album Router', () => {
         res.body.data.should.have.property('performer')
         res.body.data.performer.should.be.eql(key.albumPerformer)
         res.body.data.should.have.property('cost')
-        res.body.data.cost.should.be.eql(key.albumCost)
+        res.body.data.cost.should.be.eql(parseInt(key.albumCost))
         done()
       })
   })
@@ -70,7 +70,7 @@ describe('Album Router', () => {
         res.body.data.should.have.property('performer')
         res.body.data.performer.should.be.eql(key.albumPerformer)
         res.body.data.should.have.property('cost')
-        res.body.data.cost.should.be.eql(key.albumCost)
+        res.body.data.cost.should.be.eql(parseInt(key.albumCost))
         done()
       })
   })
@@ -92,7 +92,7 @@ describe('Album Router', () => {
         res.body.data.should.have.property('performer')
         res.body.data.performer.should.be.eql(key.albumPerformer)
         res.body.data.should.have.property('cost')
-        res.body.data.cost.should.be.eql(key.albumCost)
+        res.body.data.cost.should.be.eql(parseInt(key.albumCost))
         done()
       })
   })
