@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 module.exports = () => {
-  mongoose.connect(require('../config/keys').mongoURI, {
+  mongoose.connect(require('../config/key').mongoURI, {
     useNewUrlParser: true
   })
   mongoose.set('useCreateIndex', true)
