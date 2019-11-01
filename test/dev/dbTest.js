@@ -6,14 +6,14 @@ const mongoose = require('mongoose')
 
 // Config
 
-const key = require('../config/key')
+const key = require('../../config/key')
 
 // Models
-const Album = require('../models/Album')
-const User = require('../models/User')
-const Purchase = require('../models/Purchase')
+const Album = require('../../models/Album')
+const User = require('../../models/User')
+const Purchase = require('../../models/Purchase')
 // db connection
-require('../helper/db')()
+require('../../helper/db')()
 
 let testUserId
 let testAlbumId
@@ -35,9 +35,6 @@ describe('Testing Models', () => {
         testUserId = newUser._id
         done()
       })
-      .catch(err => {
-        throw err
-      })
   })
 
   it('Album Model', done => {
@@ -53,9 +50,6 @@ describe('Testing Models', () => {
         newAlbum.cost.should.be.eql(key.albumCost)
         testAlbumId = newAlbum._id
         done()
-      })
-      .catch(err => {
-        throw err
       })
   })
 
@@ -74,12 +68,6 @@ describe('Testing Models', () => {
             purchase.album._id.should.be.eql(testAlbumId)
             done()
           })
-          .catch(err => {
-            throw err
-          })
-      })
-      .catch(err => {
-        throw err
       })
   })
 
