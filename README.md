@@ -1,5 +1,5 @@
 - [Test Logs from Travis Ci](https://travis-ci.org/oraykt/crispy-disco)
-- [Heroku Path]
+
 - [Models](https://github.com/oraykt/crispy-disco/tree/master/models)
 - [Services](https://github.com/oraykt/crispy-disco/tree/master/services)
 - [Routes](https://github.com/oraykt/crispy-disco/tree/master/routes)
