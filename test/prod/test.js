@@ -8,16 +8,61 @@ const mongoose = require('mongoose')
 
 const key = require('../../config/key')
 
+const User = require('../../models/User')
+
+let userId
 let testAlbumId
+let authorizationCode
 
 chai.use(chaiHttp)
 
-describe('Album Router', () => {
+describe('User Router', () => {
   before(done => {
     console.log('Wait MongoDB Connection')
     mongoose.connection.on('open', () => {
       done()
     })
+  })
+
+  it('POST /user/signup', done => {
+    chai
+      .request(server)
+      .post('/user/signup')
+      .set('content-type', 'application/json')
+      .send({
+        userName: key.userName,
+        userEmail: key.userEmail
+      })
+      .end((_err, res) => {
+        res.should.have.status(200)
+        // res.headers.COULD.have.property('authorization')
+
+        res.body.should.have.property('data')
+        res.body.data.should.have.property('_id')
+        userId = res.body.data._id
+        res.body.data.should.have.property('userName')
+        res.body.data.userName.should.be.eql(key.userName)
+        res.body.data.should.have.property('userEmail')
+        res.body.data.userEmail.should.be.eql(key.userEmail)
+        done()
+      })
+  })
+
+  it('POST /user/login', done => {
+    chai
+      .request(server)
+      .post('/user/login')
+      .set('content-type', 'application/json')
+      .send({
+        userName: key.userName,
+        userEmail: key.userEmail
+      })
+      .end((_err, res) => {
+        res.should.have.status(204)
+        res.header.should.have.property('authorization')
+        authorizationCode = res.header.authorization
+        done()
+      })
   })
 
   it('GET /album', done => {
@@ -36,7 +81,10 @@ describe('Album Router', () => {
     chai
       .request(server)
       .post('/album')
-      .set('content-type', 'application/json')
+      .set({
+        'content-type': 'application/json',
+        authorization: authorizationCode
+      })
       .send({
         title: key.albumTitle,
         performer: key.albumPerformer,
@@ -79,7 +127,10 @@ describe('Album Router', () => {
     chai
       .request(server)
       .put('/album/' + testAlbumId)
-      .set('content-type', 'application/json')
+      .set({
+        'content-type': 'application/json',
+        authorization: authorizationCode
+      })
       .send({
         title: 'new' + key.albumTitle
       })
@@ -101,9 +152,51 @@ describe('Album Router', () => {
     chai
       .request(server)
       .delete('/album/' + testAlbumId)
+      .set({
+        'content-type': 'application/json',
+        authorization: authorizationCode
+      })
       .end((_err, res) => {
         res.should.have.status(204)
         done()
       })
+  })
+
+  it('POST /user/logout', done => {
+    chai
+      .request(server)
+      .post('/user/logout')
+      .set('authorization', authorizationCode)
+      .send({
+        userName: key.userName,
+        userEmail: key.userEmail
+      })
+      .end((_err, res) => {
+        res.should.have.status(204)
+        res.header.should.not.have.property('authorization')
+        done()
+      })
+  })
+
+  it('POST /album without Authorization ', done => {
+    chai
+      .request(server)
+      .post('/album')
+      .set('content-type', 'application/json')
+      .send({
+        title: key.albumTitle,
+        performer: key.albumPerformer,
+        cost: parseInt(key.albumCost)
+      })
+      .end((_err, res) => {
+        res.should.have.status(403)
+        done()
+      })
+  })
+
+  it('Remove signed up user', done => {
+    User.findOneAndDelete().then(() => {
+      done()
+    })
   })
 })

@@ -2,6 +2,21 @@ const express = require('express')
 const router = express.Router()
 
 const albumService = require('../services/albumService')
+const authorization = require('../services/authorization')
+
+const middleWare = (req, res, next) => {
+  const authCode = req.headers.authorization
+  authorization
+    .checkAuthCode(authCode)
+    .then(() => {
+      next()
+    })
+    .catch(err => {
+      res
+        .status(err.status ? err.status : 500)
+        .json({ errorMessage: err.message })
+    })
+}
 
 router.get('/', (req, res) => {
   albumService
@@ -27,7 +42,7 @@ router.get('/:id', (req, res) => {
     })
 })
 
-router.post('/', (req, res) => {
+router.post('/', middleWare, (req, res) => {
   albumService
     .importAlbum(req.body)
     .then(album => {
@@ -40,7 +55,7 @@ router.post('/', (req, res) => {
     })
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', middleWare, (req, res) => {
   albumService
     .updateAlbum(req.params.id, req.body)
     .then(updatedAlbum => {
@@ -53,7 +68,7 @@ router.put('/:id', (req, res) => {
     })
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', middleWare, (req, res) => {
   const albumId = req.params.id
   albumService
     .deleteAlbum(albumId)

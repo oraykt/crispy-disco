@@ -2,9 +2,11 @@ const mongoose = require('mongoose')
 
 module.exports = () => {
   mongoose.connect(require('../config/key').mongoURI, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   })
   mongoose.set('useCreateIndex', true)
+  mongoose.set('useFindAndModify', false)
 
   mongoose.connection.on('open', () => {
     console.log('MongoDB: Connected!')
