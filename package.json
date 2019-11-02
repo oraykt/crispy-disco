@@ -3,13 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "test": "mocha --exit --timeout 5000"
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "dev-test": "mocha ./test/dev --exit --timeout 5000",
+    "test": "mocha ./test/prod --exit --timeout 50000"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "cookie-parser": "~1.4.3",
+    "crypto": "^1.0.1",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
