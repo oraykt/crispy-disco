@@ -24,7 +24,7 @@ router.post('/login', (req, res) => {
     .then(user => {
       authorization.generateAuthCode(user.userName).then(token => {
         res.setHeader('authorization', token)
-        res.status(204).send()
+        res.status(200).json(user)
       })
     })
     .catch(err => {

@@ -11,12 +11,12 @@ const key = require('../../config/key')
 const User = require('../../models/User')
 
 let userId
-let testAlbumId
+let albumId
 let authorizationCode
 
 chai.use(chaiHttp)
 
-describe('User Router', () => {
+describe('Production Test', () => {
   before(done => {
     console.log('Wait MongoDB Connection')
     mongoose.connection.on('open', () => {
@@ -58,7 +58,7 @@ describe('User Router', () => {
         userEmail: key.userEmail
       })
       .end((_err, res) => {
-        res.should.have.status(204)
+        res.should.have.status(200)
         res.header.should.have.property('authorization')
         authorizationCode = res.header.authorization
         done()
@@ -94,7 +94,7 @@ describe('User Router', () => {
         res.should.have.status(200)
         res.body.should.have.property('data')
         res.body.data.should.have.property('_id')
-        testAlbumId = res.body.data._id
+        albumId = res.body.data._id
         res.body.data.should.have.property('title')
         res.body.data.title.should.be.eql(key.albumTitle)
         res.body.data.should.have.property('performer')
@@ -108,7 +108,7 @@ describe('User Router', () => {
   it('GET /album/:id', done => {
     chai
       .request(server)
-      .get('/album/' + testAlbumId)
+      .get('/album/' + albumId)
       .end((_err, res) => {
         res.should.have.status(200)
         res.body.should.have.property('data')
@@ -126,7 +126,7 @@ describe('User Router', () => {
   it('PUT /album/:id', done => {
     chai
       .request(server)
-      .put('/album/' + testAlbumId)
+      .put('/album/' + albumId)
       .set({
         'content-type': 'application/json',
         authorization: authorizationCode
@@ -137,7 +137,7 @@ describe('User Router', () => {
       .end((_err, res) => {
         res.should.have.status(200)
         res.body.should.have.property('data')
-        res.body.data._id.should.be.eql(testAlbumId)
+        res.body.data._id.should.be.eql(albumId)
         res.body.data.should.have.property('title')
         res.body.data.title.should.be.eql('new' + key.albumTitle)
         res.body.data.should.have.property('performer')
@@ -148,10 +148,36 @@ describe('User Router', () => {
       })
   })
 
+  it('POST /purchase', done => {
+    chai
+      .request(server)
+      .post('/purchase')
+      .set({
+        'content-type': 'application/json',
+        authorization: authorizationCode
+      })
+      .send({
+        user: {
+          _id: userId
+        },
+        album: {
+          _id: albumId
+        }
+      })
+      .end((_err, res) => {
+        res.should.have.status(200)
+        res.body.should.have.property('data')
+        res.body.data.should.have.property('user')
+        res.body.data.user._id.should.be.eql(userId)
+        res.body.data.should.have.property('album')
+        done()
+      })
+  })
+
   it('DELETE /album/:id', done => {
     chai
       .request(server)
-      .delete('/album/' + testAlbumId)
+      .delete('/album/' + albumId)
       .set({
         'content-type': 'application/json',
         authorization: authorizationCode

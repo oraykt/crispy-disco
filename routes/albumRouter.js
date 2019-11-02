@@ -2,21 +2,8 @@ const express = require('express')
 const router = express.Router()
 
 const albumService = require('../services/albumService')
-const authorization = require('../services/authorization')
 
-const middleWare = (req, res, next) => {
-  const authCode = req.headers.authorization
-  authorization
-    .checkAuthCode(authCode)
-    .then(() => {
-      next()
-    })
-    .catch(err => {
-      res
-        .status(err.status ? err.status : 500)
-        .json({ errorMessage: err.message })
-    })
-}
+const middleWare = require('./middleware')
 
 router.get('/', (req, res) => {
   albumService
