@@ -36,7 +36,6 @@ describe('Production Test', () => {
       .end((_err, res) => {
         res.should.have.status(200)
         // res.headers.COULD.have.property('authorization')
-
         res.body.should.have.property('data')
         res.body.data.should.have.property('_id')
         userId = res.body.data._id
